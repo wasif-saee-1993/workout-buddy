@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const WorkoutForm = ( ) => {
     const [title, setTitle] = useState("")
@@ -7,10 +8,16 @@ const WorkoutForm = ( ) => {
     const [load, setLoad] = useState("")
     const [error, setError] = useState(null)
     const { dispatch } = useWorkoutsContext()
+    const { user } = useAuthContext()
     const [emptyFields, setEmptyFields] = useState([])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+
+        if(!user) {
+            setError(["You must be logged In"])
+            return
+        }
 
         const workout = { title, load, reps }
 
@@ -18,7 +25,8 @@ const WorkoutForm = ( ) => {
             method: "POST",
             body: JSON.stringify(workout),
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
             }
         })
 
