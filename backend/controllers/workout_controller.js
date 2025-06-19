@@ -94,10 +94,12 @@ const updateWorkout = async (req, res) => {
 
         const workout = await Workout.findOneAndUpdate({_id: id}, { ...req.body})
 
+        let updatedWorkout = await Workout.findById(id)
+        
         if (!workout) {
             res.status(404).json({error: "No result found"})
         } else {
-            res.status(200).json(workout)
+            res.status(200).json(updatedWorkout)
         }
     } catch (error) {
         res.status(400).json({error: error.message})
